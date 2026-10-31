@@ -140,6 +140,36 @@ resultados_mas
 
 # Muestreo Sistemático sin reemplazo
 
+# Definir los tamaños de población y muestra
+N = nrow(poblacion)
+n = 400
+
+# Seleccionar la muestra sistemática
+set.seed(456)
+seleccion_sis = UPsystematic(rep(n / N, N))
+muestra_sis = copy(poblacion[seleccion_sis == 1])
+
+# Conservar el orden del marco muestral
+setorder(muestra_sis, id_unidad)
+
+# Incorporar probabilidades de inclusión y factores de expansión
+muestra_sis[, pi := n / N]
+muestra_sis[, peso := 1 / pi]
+
+# Muestra
+muestra_sis[, .(id_unidad, pi, peso, total_matricula)]
+
+# Estimar el total y el promedio poblacionales
+total_sis = muestra_sis[
+  , sum(peso * total_matricula)
+]
+
+promedio_sis = total_sis / N
+
+total_sis
+
+promedio_sis
+
 library(svrep)
 
 # Construir la matriz del estimador de varianza SD1
