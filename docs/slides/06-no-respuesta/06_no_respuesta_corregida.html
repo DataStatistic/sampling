@@ -442,7 +442,7 @@
   <meta name="generator" content="quarto-1.10.18">
 
   <meta name="author" content="Mario José Pacheco López">
-  <meta name="dcterms.date" content="2026-11-17">
+  <meta name="dcterms.date" content="2026-11-20">
   <title>Muestreo Estadístico</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1012,7 +1012,7 @@ Mario José Pacheco López
     </div>
 </div>
 
-  <p class="date">2026-11-17</p>
+  <p class="date">2026-11-20</p>
 </section>
 <section id="no-respuesta" class="slide level2">
 <h2>No respuesta</h2>
@@ -1178,38 +1178,112 @@ w_k=\frac{d_k}{\widehat\rho_k},\quad k\in s_r.
 <h1>Imputación</h1>
 
 </section>
-<section id="imputación-hot-deck-fraccional-fhdi" class="slide level2">
-<h2>Imputación hot-deck fraccional (FHDI)</h2>
-<p>La imputación permite completar los valores faltantes de las unidades con no respuesta de ítem.</p>
-<p>En la <strong>imputación hot-deck fraccional (FHDI)</strong>, los valores faltantes de una unidad receptora se sustituyen por valores observados de varios donantes de la misma muestra, seleccionados a partir de la información observada.</p>
-<p>Cada donante aporta una fracción del peso de la unidad receptora. Se obtiene una única base de datos extendida que conserva la información observada y las alternativas de imputación.</p>
+<section id="imputación-hot-deck" class="slide level2">
+<h2>Imputación hot-deck</h2>
+<p>La <strong>imputación hot-deck</strong> sustituye un valor faltante por el valor observado en otra unidad de la misma muestra, denominada <strong>donante</strong>. La unidad con el valor faltante se denomina <strong>receptora</strong>.</p>
+<p>Para la no respuesta de ítem, se considera el <strong>hot-deck aleatorio ponderado</strong>: cada receptor recibe el valor de un donante seleccionado aleatoriamente entre unidades comparables, con probabilidades que consideran sus pesos muestrales.</p>
+<p>La imputación conserva un único registro por unidad. Para estimar la varianza es necesario conservar la identificación del donante asignado a cada receptor.</p>
 </section>
-<section id="pesos-fraccionales" class="slide level2">
-<h2>Pesos fraccionales</h2>
-<p>Sea <span class="math inline">\(M_k\)</span> el número de registros asociados a la unidad <span class="math inline">\(k\)</span> después de la imputación. A cada registro <span class="math inline">\(j\)</span> se le asigna una fracción <span class="math inline">\(f_{kj}\)</span> tal que</p>
+<section id="celdas-de-imputación" class="slide level2">
+<h2>Celdas de imputación</h2>
+<p>Los donantes se seleccionan dentro de <strong>celdas de imputación</strong>, formadas con variables auxiliares relacionadas con la variable de interés y el mecanismo de respuesta.</p>
+<p>Las variables numéricas pueden agruparse en intervalos y las categóricas, según sus modalidades. Si una celda tiene pocos donantes, puede ser necesario combinarla con otras de características próximas.</p>
+</section>
+<section id="selección-ponderada-de-donantes" class="slide level2">
+<h2>Selección ponderada de donantes</h2>
+<p>Sean <span class="math inline">\(s_{r,c}\)</span> los respondientes de la celda <span class="math inline">\(c\)</span> y <span class="math inline">\(w_j\)</span> el peso previo a la imputación. Para un receptor <span class="math inline">\(k\)</span> de esa celda, el donante <span class="math inline">\(j\in s_{r,c}\)</span> se selecciona con probabilidad</p>
 <p><span class="math display">\[
-f_{kj}\geq 0,\qquad \sum_{j=1}^{M_k}f_{kj}=1.
+p_{j\mid c}=\frac{w_j}{\sum_{l\in s_{r,c}}w_l}.
 \]</span></p>
-<p>Si <span class="math inline">\(w_k\)</span> es el peso de la unidad antes de imputar, el peso del registro es <span class="math inline">\(w_{kj}^{*}=w_k f_{kj}\)</span>.</p>
-<p>Las unidades completas conservan un único registro con <span class="math inline">\(f_{k1}=1\)</span>. La suma de los pesos de los registros de cada unidad es igual a su peso original.</p>
+<p>La selección se realiza entre los respondientes de la celda y puede permitir que una unidad actúe como donante de varios receptores.</p>
+<p>El valor imputado <span class="math inline">\(\widetilde y_k\)</span> es el valor observado del donante seleccionado. Para las unidades que responden, <span class="math inline">\(\widetilde y_k=y_k\)</span>.</p>
 </section>
-<section id="estimación-con-fhdi" class="slide level2">
-<h2>Estimación con FHDI</h2>
-<p>Sea <span class="math inline">\(s_I\)</span> la muestra extendida y <span class="math inline">\(y_{kj}^{*}\)</span> el valor observado o imputado en su registro <span class="math inline">\((k,j)\)</span>.</p>
-<p>El estimador del total es</p>
+<section id="estimación-con-datos-imputados" class="slide level2">
+<h2>Estimación con datos imputados</h2>
+<p>Una vez completada la variable <span class="math inline">\(Y\)</span>, el estimador del total es</p>
 <p><span class="math display">\[
-\widehat t_{y,\mathrm{FHDI}}=\sum_{(k,j)\in s_I}w_{kj}^{*}y_{kj}^{*}.
+\widehat t_{y,I}=\sum_{k\in s}w_k\widetilde y_k.
 \]</span></p>
-<p>Las medias y proporciones se obtienen a partir de los totales correspondientes. Para estimar la varianza se emplean pesos replicados que incorporen el diseño muestral y el procedimiento de imputación, incluyendo el ajuste de los pesos fraccionales.</p>
+<p>Si se conoce el tamaño poblacional <span class="math inline">\(N\)</span>, la media se estima mediante</p>
+<p><span class="math display">\[
+\widehat{\bar Y}_I=\frac{\widehat t_{y,I}}{N}.
+\]</span></p>
+<p>Las proporciones se estiman de forma análoga, imputando los indicadores de las categorías de interés.</p>
 </section>
-<section id="referencias" class="slide level2">
-<h2>Referencias</h2>
+<section id="varianza-después-de-la-imputación" class="slide level2">
+<h2>Varianza después de la imputación</h2>
+<div style="font-size: 92%;">
+<p>La varianza del estimador hot-deck no se obtiene correctamente, en general, tratando los valores imputados como si hubieran sido observados. Brick, Kalton y Kim (2004) proponen estimarla mediante tres componentes:</p>
+<p><span class="math display">\[
+\widehat V_{\mathrm{TOT}}
+=\widehat V_{\mathrm{SAM}}
++\widehat V_{\mathrm{IMP}}
++2\widehat V_{\mathrm{MIX}}.
+\]</span></p>
 <ul>
-<li>Särndal, C.-E., Swensson, B. y Wretman, J. (1992). <em>Model Assisted Survey Sampling</em>. Springer.</li>
-<li>Särndal, C.-E. y Lundström, S. (2005). <em>Estimation in Surveys with Nonresponse</em>. Wiley.</li>
-<li>Little, R. J. y Vartivarian, S. (2005). Does weighting for nonresponse increase the variance of survey means? <em>Survey Methodology</em>, 31(2), 161–168.</li>
-<li>Im, J., Cho, I. H. y Kim, J. K. (2018). <a href="https://journal.r-project.org/articles/RJ-2018-020/">FHDI: An R Package for Fractional Hot Deck Imputation</a>. <em>The R Journal</em>, 10(1), 140–154.</li>
+<li><span class="math inline">\(\widehat V_{\mathrm{SAM}}\)</span>: variabilidad debida al muestreo.</li>
+<li><span class="math inline">\(\widehat V_{\mathrm{IMP}}\)</span>: variabilidad asociada a los valores imputados.</li>
+<li><span class="math inline">\(\widehat V_{\mathrm{MIX}}\)</span>: componente mixto entre los errores de muestreo e imputación.</li>
 </ul>
+</div>
+</section>
+<section id="componente-de-muestreo" class="slide level2">
+<h2>Componente de muestreo</h2>
+<div style="font-size: 92%;">
+<p>Sea el estimador de varianza correspondiente al diseño, expresado para una variable completa como una forma cuadrática con coeficientes <span class="math inline">\(\Omega_{kl}\)</span>.</p>
+<p>Aplicado a los valores imputados, produce</p>
+<p><span class="math display">\[
+\widehat V_0=\sum_{k\in s}\sum_{l\in s}
+\Omega_{kl}\widetilde y_k\widetilde y_l.
+\]</span></p>
+<p>El procedimiento de Brick, Kalton y Kim corrige el posible sesgo de <span class="math inline">\(\widehat V_0\)</span> utilizando las relaciones entre donantes y receptores y las varianzas estimadas dentro de las celdas.</p>
+<p>La corrección depende de los coeficientes <span class="math inline">\(\Omega_{kl}\)</span> del estimador de varianza del diseño.</p>
+</div>
+</section>
+<section id="corrección-del-componente-de-muestreo" class="slide level2">
+<h2>Corrección del componente de muestreo</h2>
+<div style="font-size: 92%;">
+<p>Sean <span class="math inline">\(\delta_{jk}=1\)</span> si <span class="math inline">\(j\)</span> es donante de <span class="math inline">\(k\)</span> y <span class="math inline">\(0\)</span> en otro caso, y <span class="math inline">\(\gamma_{kl}=1\)</span> si los receptores <span class="math inline">\(k\)</span> y <span class="math inline">\(l\)</span> comparten donante. Sea <span class="math inline">\(\widehat\sigma_c^2\)</span> la varianza estimada entre respondientes de la celda <span class="math inline">\(c\)</span>.</p>
+<p>El componente de muestreo corregido es</p>
+<p><span class="math display">\[
+\widehat V_{\mathrm{SAM}}=\widehat V_0-2\sum_c\widehat\sigma_c^2\left[
+\sum_{j\in s_{r,c}}\sum_{k\in s_{m,c}}\Omega_{jk}\delta_{jk}
++\sum_{\substack{k&lt;l\\k,l\in s_{m,c}}}\Omega_{kl}\gamma_{kl}
+\right].
+\]</span></p>
+<p>La expresión incorpora la correspondencia entre donantes y receptores, además de la estructura del diseño muestral contenida en los coeficientes <span class="math inline">\(\Omega_{kl}\)</span>.</p>
+</div>
+</section>
+<section id="componente-de-imputación" class="slide level2">
+<h2>Componente de imputación</h2>
+<p>Sean <span class="math inline">\(s_{m,c}\)</span> las unidades con valores faltantes en la celda <span class="math inline">\(c\)</span>. La variabilidad debida a la imputación se estima a partir de los pesos de los receptores, las varianzas dentro de las celdas y el uso compartido de donantes.</p>
+<p><span class="math display">\[
+\widehat V_{\mathrm{IMP}}
+=2\sum_c\widehat\sigma_c^2\left[
+\sum_{k\in s_{m,c}}w_k^2
++\sum_{\substack{k&lt;l\\k,l\in s_{m,c}}}w_kw_l\gamma_{kl}
+\right].
+\]</span></p>
+<p>La segunda suma recoge el efecto de utilizar un mismo donante para varios receptores.</p>
+</section>
+<section id="componente-mixto-y-varianza-total" class="slide level2">
+<h2>Componente mixto y varianza total</h2>
+<p>El componente mixto se estima utilizando la correspondencia entre donantes y receptores:</p>
+<p><span class="math display">\[
+\widehat V_{\mathrm{MIX}}=
+\sum_c\widehat\sigma_c^2
+\left[
+\sum_{j\in s_{r,c}}\sum_{k\in s_{m,c}}w_jw_k\delta_{jk}
+-\sum_{k\in s_{m,c}}w_k^2
+\right].
+\]</span></p>
+<p>La varianza total se obtiene sumando este componente, el de imputación y el componente de muestreo corregido. A partir de ella se calculan el error estándar, el CV y los intervalos de confianza.</p>
+</section>
+<section id="condiciones-para-la-estimación-de-varianza" class="slide level2">
+<h2>Condiciones para la estimación de varianza</h2>
+<p>El procedimiento de Brick, Kalton y Kim (2004) se desarrolla para estimadores lineales y <strong>una variable con valores faltantes</strong>, bajo un modelo con media y varianza comunes dentro de cada celda.</p>
+<p>Requiere que la selección muestral, la respuesta y la imputación sean ignorables condicionalmente a la información empleada, así como una estimación de varianza válida para el diseño con respuesta completa.</p>
+<p>En la aplicación deben conservarse los pesos, las celdas y las correspondencias receptor–donante. La formación automática de celdas no garantiza por sí sola que se cumpla el modelo de imputación.</p>
 
 </section></section>
     </div>
